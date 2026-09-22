@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.doctorappointment.databinding.FragmentDoctorsBinding
+import com.example.doctorappointment.ui.appointment.AppointmentFragment
+import com.example.doctorappointment.R
 
 /**
  * Экран со списком врачей.
@@ -37,8 +39,17 @@ class DoctorsFragment : Fragment() {
         // Настраиваем RecyclerView
         binding.rvDoctors.layoutManager = LinearLayoutManager(requireContext())
         adapter = DoctorAdapter(emptyList()) { doctor ->
-            Toast.makeText(requireContext(), "Выбран: ${doctor.name}", Toast.LENGTH_SHORT).show()
-            // TODO: переход на экран записи
+            val fragment = AppointmentFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("doctorId", doctor.id)
+                    putString("doctorName", doctor.name)
+                    putString("specialty", doctor.specialty)
+                }
+            }
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.rvDoctors.adapter = adapter
 
