@@ -1,11 +1,13 @@
 package com.example.doctorappointment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.doctorappointment.databinding.ActivityMainBinding
+import com.example.doctorappointment.service.AppointmentService
 import com.example.doctorappointment.ui.author.AuthorFragment
 import com.example.doctorappointment.ui.doctors.DoctorsFragment
 import com.example.doctorappointment.ui.feedback.FeedbackFragment
@@ -39,18 +41,32 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // Слушатель жизненного цикла фрагментов
+        // Скрытие меню на Splash
         supportFragmentManager.registerFragmentLifecycleCallbacks(
             object : FragmentManager.FragmentLifecycleCallbacks() {
                 override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                     super.onFragmentResumed(fm, f)
-                    // Скрываем меню, если открыт Splash
                     val isSplash = f is SplashFragment
                     binding.bottomNav.visibility = if (isSplash) View.GONE else View.VISIBLE
                 }
             },
             true
         )
+
+        // Запускаем фоновый сервис
+        val serviceIntent = Intent(this, AppointmentService::class.java)
+        startService(serviceIntent)
+
+        // Запрос разрешения на уведомления (для Android 13+)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    100
+                )
+            }
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {
