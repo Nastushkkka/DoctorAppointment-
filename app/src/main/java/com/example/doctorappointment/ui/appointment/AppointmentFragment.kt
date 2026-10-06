@@ -47,7 +47,12 @@ class AppointmentFragment : Fragment() {
         binding.tvDoctorName.text = doctorName
         binding.tvSpecialty.text = specialty
 
-        // Обработчик кнопки
+        // Кнопка "Назад" — возвращает к списку врачей
+        binding.btnBack.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
+        // Обработчик кнопки "Записаться"
         binding.btnSave.setOnClickListener {
             saveAppointment()
         }
@@ -86,10 +91,9 @@ class AppointmentFragment : Fragment() {
         // ========== ПРОВЕРКА: дата не в прошлом ==========
         try {
             val dateFormat = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
-            dateFormat.isLenient = false // строгий разбор (нельзя 32.13.2025)
+            dateFormat.isLenient = false
             val parsedDate: java.util.Date = dateFormat.parse(date) ?: throw Exception()
 
-            // Сегодняшняя дата без времени
             val today = java.util.Calendar.getInstance()
             today.set(java.util.Calendar.HOUR_OF_DAY, 0)
             today.set(java.util.Calendar.MINUTE, 0)
@@ -114,7 +118,7 @@ class AppointmentFragment : Fragment() {
             return
         }
 
-        // ========== ПРОВЕРКА: корректное время (часы 0-23, минуты 0-59) ==========
+        // ========== ПРОВЕРКА: корректное время ==========
         val hours = time.substring(0, 2).toIntOrNull()
         val minutes = time.substring(3, 5).toIntOrNull()
 
@@ -123,7 +127,7 @@ class AppointmentFragment : Fragment() {
             return
         }
 
-        // (опционально) Рабочие часы: 8:00 - 20:00
+        // Рабочие часы: 8:00 - 20:00
         if (hours < 8 || hours > 20) {
             binding.etTime.error = "Рабочие часы: с 8:00 до 20:00"
             Toast.makeText(requireContext(), "Клиника работает с 8:00 до 20:00", Toast.LENGTH_SHORT).show()
