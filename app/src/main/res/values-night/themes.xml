@@ -1,7 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme for night mode. -->
     <style name="Base.Theme.DoctorAppointment" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Свой шрифт для всего приложения -->
+        <item name="android:fontFamily">@font/custom_font</item>
     </style>
+
+    <style name="Theme.DoctorAppointment" parent="Base.Theme.DoctorAppointment" />
 </resources>
